@@ -1,18 +1,23 @@
 import React from "react";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { Polyline } from "@react-google-maps/api";
 
 const containerStyle = {
   width: "100%",
   height: "800px",
 };
 
+export const convertArrayToLatLng = (arr) => {
+  return arr.map(([lat, lng]) => ({ lat, lng }));
+};
+
 export const Map = ({
   markers = [],
+  polylines = [],
   callbacks = {},
   onMarkerRightClick = () => {},
   onMarkerMove = () => {},
 }) => {
-  console.log("map render", markers);
   return (
     <LoadScript
       googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
@@ -35,6 +40,10 @@ export const Map = ({
               draggable
             />
           );
+        })}
+        {polylines.map((polyline, i) => {
+          const path = convertArrayToLatLng(polyline);
+          return <Polyline key={i} path={path} />;
         })}
       </GoogleMap>
     </LoadScript>
