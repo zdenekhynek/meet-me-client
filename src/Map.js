@@ -1,11 +1,44 @@
 import React from "react";
-import { withScriptjs, withGoogleMap, GoogleMap, Marker } from "react-google-maps"
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
-export const MyMapComponent = withScriptjs(withGoogleMap((props) =>
-  <GoogleMap
-    defaultZoom={8}
-    defaultCenter={{ lat: -34.397, lng: 150.644 }}
-  >
-    {props.isMarkerShown && <Marker position={{ lat: -34.397, lng: 150.644 }} />}
-  </GoogleMap>
-))
+const containerStyle = {
+  width: "100%",
+  height: "800px",
+};
+
+export const Map = ({
+  markers = [],
+  callbacks = {},
+  onMarkerRightClick = () => {},
+  onMarkerMove = () => {},
+}) => {
+  console.log("map render", markers);
+  return (
+    <LoadScript
+      googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
+      loadingElement={<div style={{ height: `100%` }} />}
+    >
+      <GoogleMap
+        mapContainerStyle={containerStyle}
+        zoom={10}
+        center={{ lat: 51.5, lng: 0 }}
+        options={{ disableDoubleClickZoom: true }}
+        {...callbacks}
+      >
+        {markers.map((marker, i) => {
+          return (
+            <Marker
+              key={i}
+              position={{ lat: marker.lat, lng: marker.lng }}
+              onRightClick={(evt) => onMarkerRightClick(i, evt)}
+              onDragEnd={(evt) => onMarkerMove(i, evt)}
+              draggable
+            />
+          );
+        })}
+      </GoogleMap>
+    </LoadScript>
+  );
+};
+
+export default Map; //withScriptjs(withGoogleMap(Map));
