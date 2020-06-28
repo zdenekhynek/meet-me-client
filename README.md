@@ -1,1 +1,3 @@
-# meet-me-client
+# MeetMe Client
+
+Create react app
